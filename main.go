@@ -4,6 +4,8 @@ import (
 	"github.com/spf13/cobra"
 	"strconv"
 	"log"
+	"cyber_arm/config"
+	"cyber_arm/server"
 )
 
 var (
@@ -19,11 +21,11 @@ func main() {
 		Use:   "start",
 		Short: "Start server",
 		Run: func(cmd *cobra.Command, args []string) {
-			config, err := readConfig()
+			configuration, err := readConfiguration()
 			if err != nil {
 				log.Fatalf("Failed to initialize server configuration: %s", err)
 			}
-			StartServer(config)
+			server.Start(configuration)
 		},
 	}
 
@@ -36,22 +38,22 @@ func main() {
 	rootCmd.Execute()
 }
 
-func readConfig() (*ServerConfiguration, error) {
-	config := new(ServerConfiguration)
-	config.Host = host
-	config.Port = port
+func readConfiguration() (*config.ServerConfiguration, error) {
+	configuration := new(config.ServerConfiguration)
+	configuration.Host = host
+	configuration.Port = port
 
 	if messageBufferSize, err := strconv.Atoi(messageBufferSize); err != nil {
 		return nil, err
 	} else {
-		config.MessageBufferSize = messageBufferSize
+		configuration.MessageBufferSize = messageBufferSize
 	}
 
 	if messageQueueSize, err := strconv.Atoi(messageQueueSize); err != nil {
 		return nil, err
 	} else {
-		config.MessageQueueSize = messageQueueSize
+		configuration.MessageQueueSize = messageQueueSize
 	}
 
-	return config, nil
+	return configuration, nil
 }

@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"net"
@@ -6,11 +6,12 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"cyber_arm/config"
 )
 
 type MessageChannel chan string
 
-func StartServer(config *ServerConfiguration) {
+func Start(config *config.ServerConfiguration) {
 	connection, err := net.ListenPacket("udp", config.Address())
 	if err != nil {
 		log.Fatalf("Failed to start UDP server: %s", err)
