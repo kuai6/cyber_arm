@@ -51,8 +51,8 @@ const (
 	// MISC
 
 	AMG88xx_PIXEL_ARRAY_SIZE      int     = 64
-	AMG88xx_PIXEL_TEMP_CONVERSION float64 = .25
-	AMG88xx_THERMISTOR_CONVERSION float64 = .0625
+	AMG88xx_PIXEL_TEMP_CONVERSION float64 = 0.25
+	AMG88xx_THERMISTOR_CONVERSION float64 = 0.0625
 )
 
 // power control register
@@ -283,7 +283,7 @@ func (p *AMG88XX) ReadPixels() []byte {
 	raw := p.ReadPixelsRAW()
 	buf := make([]byte, 64)
 
-	for b, i := range raw {
+	for i, b := range raw {
 		recast := uint16(b<<8) | uint16(b)
 		buf[i] = byte(p.signedMag12ToFloat(recast) * AMG88xx_PIXEL_TEMP_CONVERSION)
 	}
