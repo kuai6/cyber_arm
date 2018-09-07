@@ -1,18 +1,18 @@
 package main
 
 import (
+	"github.com/kuai6/cyber_arm/config"
+	"github.com/kuai6/cyber_arm/server"
 	"github.com/spf13/cobra"
-	"strconv"
 	"log"
-	"cyber_arm/config"
-	"cyber_arm/server"
+	"strconv"
 )
 
 var (
-	host string
-	port string
+	host              string
+	port              string
 	messageBufferSize string
-	messageQueueSize string
+	messageQueueSize  string
 )
 
 func main() {
@@ -31,7 +31,7 @@ func main() {
 
 	start.PersistentFlags().StringVar(&host, "host", "0.0.0.0", "server host")
 	start.PersistentFlags().StringVar(&port, "port", "10001", "server port")
-	start.PersistentFlags().StringVar(&messageBufferSize, "messageBufferSize",  "1024", "message buffer size (in bytes)")
+	start.PersistentFlags().StringVar(&messageBufferSize, "messageBufferSize", "1024", "message buffer size (in bytes)")
 	start.PersistentFlags().StringVar(&messageQueueSize, "messageQueueSize", "10", "message queue size")
 
 	rootCmd.AddCommand(start)
