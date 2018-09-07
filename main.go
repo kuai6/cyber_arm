@@ -21,9 +21,13 @@ func main() {
 
 	d := device.PCA9685{}
 	d.Start()
-	c := d.GetChannel(0)
-	v, _ := strconv.ParseFloat(os.Args[1], 32)
-	c.SetPercentage(float32(v))
+	//c1 := d.GetChannel(0)
+	//v1, _ := strconv.ParseFloat(os.Args[1], 32)
+	//c1.SetPercentage(float32(v1))
+
+	c2 := d.GetChannel(1)
+	v2, _ := strconv.ParseFloat(os.Args[1], 32)
+	c2.SetPercentage(float32(v2))
 
 	var rootCmd = &cobra.Command{Use: "cyber-arm-service"}
 	var start = &cobra.Command{
