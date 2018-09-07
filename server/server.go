@@ -1,12 +1,12 @@
 package server
 
 import (
-	"net"
+	"github.com/kuai6/cyber_arm/config"
 	"log"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
-	"cyber_arm/config"
 )
 
 type MessageChannel chan string
