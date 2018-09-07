@@ -25,11 +25,11 @@ const (
 	SLEEP         byte = 0x10
 	BYTE          byte = 0xFF
 
-	DEFAULT_FREQ float32 = 100.0
+	DEFAULT_FREQ float32 = 60.0
 	OSC_FREQ     float32 = 25000000.0
 	STEP_COUNT   float32 = 4096.0
-	MIN_PULSE    float32 = 110
-	MAX_PULSE    float32 = 480
+	MIN_PULSE    float32 = 150
+	MAX_PULSE    float32 = 650
 )
 
 type PCA9685 struct {
