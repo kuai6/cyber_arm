@@ -2,6 +2,7 @@ package device
 
 import (
 	"golang.org/x/exp/io/i2c"
+	"math"
 	"sync"
 	"time"
 )
@@ -274,9 +275,30 @@ func (p *AMG88XX) writeByte(reg byte, byteVal byte) error {
 }
 
 func (p *AMG88XX) ReadPixelsRAW() []byte {
-	buf := make([]byte, 128)
+	buf := make([]byte, 64)
 	p.d.ReadReg(AMG88xx_PIXEL_OFFSET, buf)
 	return buf
+}
+
+func (p *AMG88XX) ReadPixels() []byte {
+	raw := p.ReadPixelsRAW()
+	buf := make([]byte, 64)
+
+	for b, i := range raw {
+		recast := b<<8 | b
+		buf[i] = byte(p.signedMag12ToFloat(recast) * AMG88xx_PIXEL_TEMP_CONVERSION)
+	}
+	return buf
+}
+
+func (p *AMG88XX) signedMag12ToFloat(val uint16) float64 {
+	//take first 11 bits as absolute val
+	absVal := (val & 0x7FF)
+
+	if val&0x8000 == 1 {
+		return 0 - float64(absVal)
+	}
+	return float64(absVal)
 }
 
 // Stop - unregister device resources

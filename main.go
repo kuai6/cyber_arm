@@ -34,7 +34,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%v", d.ReadPixelsRAW())
+	fmt.Printf("%v", d.ReadPixels())
 
 	var rootCmd = &cobra.Command{Use: "cyber-arm-service"}
 	var start = &cobra.Command{
