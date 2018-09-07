@@ -28,6 +28,8 @@ const (
 	DEFAULT_FREQ float32 = 1000.0
 	OSC_FREQ     float32 = 25000000.0
 	STEP_COUNT   float32 = 4096.0
+	MIN_PULSE    float32 = 0
+	MAX_PULSE    float32 = 4096
 )
 
 type PCA9685 struct {
@@ -59,6 +61,12 @@ func (c *Channel) SetPulse(on int, off int) error {
 	c.p.setPwm(c.pin, on, off)
 
 	return nil
+}
+
+func (c *Channel) SetPercentage(percent float32) {
+	pulseLength := int((MAX_PULSE-MIN_PULSE)*percent/100 + MIN_PULSE)
+
+	c.SetPulse(0, pulseLength)
 }
 
 func (p *PCA9685) Start() error {
