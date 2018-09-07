@@ -30,7 +30,10 @@ func main() {
 	//c2.SetPercentage(float32(v2))
 
 	d := device.AMG88XX{}
-	d.Start()
+	err := d.Start()
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("%v", d.ReadPixelsRAW())
 
 	var rootCmd = &cobra.Command{Use: "cyber-arm-service"}
