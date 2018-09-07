@@ -24,7 +24,6 @@ const (
 	OUTDRV        byte = 0x04
 	ALLCALL       byte = 0x01
 	SLEEP         byte = 0x10
-	BYTE          byte = 0xFF
 
 	DEFAULT_FREQ float32 = 60.0
 	OSC_FREQ     float32 = 25000000.0
@@ -150,7 +149,7 @@ func (p *PCA9685) setPwm(pwm int, on int, off int) {
 }
 
 func (p *PCA9685) write8(reg byte, intVal int) {
-	byteVal := byte(intVal) & BYTE
+	byteVal := byte(intVal) & 0xFF
 
 	p.writeByte(reg, byteVal)
 }
