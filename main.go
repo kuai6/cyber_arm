@@ -21,7 +21,7 @@ func main() {
 	d := device.PCA9685{}
 	d.Start()
 	c := d.GetChannel(0)
-	c.SetPulse(50, 50)
+	c.SetPercentage(50)
 
 	var rootCmd = &cobra.Command{Use: "cyber-arm-service"}
 	var start = &cobra.Command{
