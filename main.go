@@ -6,6 +6,7 @@ import (
 	"github.com/kuai6/cyber_arm/server"
 	"github.com/spf13/cobra"
 	"log"
+	"os"
 	"strconv"
 )
 
@@ -21,7 +22,8 @@ func main() {
 	d := device.PCA9685{}
 	d.Start()
 	c := d.GetChannel(0)
-	c.SetPercentage(50)
+	v, _ := strconv.ParseFloat(os.Args[1], 32)
+	c.SetPercentage(float32(v))
 
 	var rootCmd = &cobra.Command{Use: "cyber-arm-service"}
 	var start = &cobra.Command{
