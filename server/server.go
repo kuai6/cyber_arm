@@ -1,65 +1,50 @@
 package server
 
 import (
-	"net"
+	"github.com/kuai6/cyber_arm/config"
+	"fmt"
 	"log"
-	"os"
-	"os/signal"
-	"syscall"
-	"cyber_arm/config"
+	"net"
 )
 
-type MessageChannel chan string
+type Server struct {
+	MessageBuffer  []byte
+	Connection     net.PacketConn
+	MessageChannel chan *Message
+}
 
-func Start(config *config.ServerConfiguration) {
+func NewServer(config *config.ServerConfiguration) (*Server, chan *Message, error) {
 	connection, err := net.ListenPacket("udp", config.Address())
 	if err != nil {
-		log.Fatalf("Failed to start UDP server: %s", err)
+		return nil, nil, fmt.Errorf("Failed to start UDP server: %s", err)
 	}
-	defer connection.Close()
 
 	log.Printf("Started UDP server: %s\n", connection.LocalAddr().String())
 
-	messageChannel := listenPackets(connection, config.MessageBufferSize, config.MessageQueueSize)
-	stopSignalChannel := listenInterruption()
+	buffer := make([]byte, config.MessageBufferSize)
+	messageChannel := make(chan *Message, config.MessageQueueSize)
 
-	for {
-		select {
-		case message := <-messageChannel:
-			{
-				log.Printf("Received message: %s\n", message)
-			}
-		case <-stopSignalChannel:
-			{
-				log.Println("Server is shutting down...")
-				return
-			}
-		}
+	return &Server{
+		MessageBuffer:  buffer,
+		Connection:     connection,
+		MessageChannel: messageChannel,
+	}, messageChannel, nil
+}
+
+func (s *Server) ReadMessage() {
+	n, addr, err := s.Connection.ReadFrom(s.MessageBuffer)
+	if err != nil {
+		log.Printf("Failed to receive UDP packet: %s\n", err)
 	}
+
+	s.MessageChannel <- &Message{s.MessageBuffer[0:n], addr}
 }
 
-func listenPackets(connection net.PacketConn, bufferSize int, queueSize int) MessageChannel {
-	buffer := make([]byte, bufferSize)
-	channel := make(MessageChannel, queueSize)
+func (s *Server) SendMessage(message *Message) error {
+	_, err := s.Connection.WriteTo(message.Data, message.Address)
+	if err != nil {
+		return fmt.Errorf("Failed to send packet: %s\n", err)
+	}
 
-	go func() {
-		for {
-			n, _, err := connection.ReadFrom(buffer)
-			if err != nil {
-				log.Printf("Failed to receive UDP packet: %s\n", err)
-			}
-			message := string(buffer[0:n])
-			channel <- message
-		}
-	}()
-
-	return channel
-}
-
-func listenInterruption() chan os.Signal {
-	stopSignal := make(chan os.Signal)
-	signal.Notify(stopSignal, syscall.SIGTERM)
-	signal.Notify(stopSignal, syscall.SIGINT)
-
-	return stopSignal
+	return nil
 }

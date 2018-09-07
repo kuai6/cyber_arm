@@ -3,10 +3,10 @@ package config
 import "fmt"
 
 type ServerConfiguration struct {
-	Host string
-	Port string
+	Host              string
+	Port              string
 	MessageBufferSize int
-	MessageQueueSize int
+	MessageQueueSize  int
 }
 
 func (c *ServerConfiguration) Address() string {
