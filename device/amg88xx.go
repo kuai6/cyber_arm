@@ -241,22 +241,26 @@ func (a *AMG88XX) Start() error {
 		return err
 	}
 	// noraml mode
-	err = a.writeByte(AMG88xx_PCTL, pctl{PCTL: AMG88xx_NORMAL_MODE}.get())
+	_pctl := pctl{PCTL: AMG88xx_NORMAL_MODE}
+	err = a.writeByte(AMG88xx_PCTL, _pctl.get())
 	if err != nil {
 		return err
 	}
 	//software reset
-	err = a.writeByte(AMG88xx_RST, rst{RST: AMG88xx_INITIAL_RESET}.get())
+	_rst := rst{RST: AMG88xx_INITIAL_RESET}
+	err = a.writeByte(AMG88xx_RST, _rst.get())
 	if err != nil {
 		return err
 	}
 	// disabling interrupt
-	err = a.writeByte(AMG88xx_INTC, intc{INTEN: 0}.get())
+	_intc := intc{INTEN: 0}
+	err = a.writeByte(AMG88xx_INTC, _intc.get())
 	if err != nil {
 		return err
 	}
 	//set to 10 FPS
-	err = a.writeByte(AMG88xx_FPSC, fpsc{FPS: AMG88xx_FPS_10}.get())
+	_fpsc := fpsc{FPS: AMG88xx_FPS_10}
+	err = a.writeByte(AMG88xx_FPSC, _fpsc.get())
 	if err != nil {
 		return err
 	}
