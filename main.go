@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/kuai6/cyber_arm/config"
+	"github.com/kuai6/cyber_arm/device"
 	"github.com/kuai6/cyber_arm/server"
 	"github.com/spf13/cobra"
 	"log"
@@ -16,6 +17,10 @@ var (
 )
 
 func main() {
+
+	d := device.PCA9685{}
+	d.Start()
+
 	var rootCmd = &cobra.Command{Use: "cyber-arm-service"}
 	var start = &cobra.Command{
 		Use:   "start",
