@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"golang.org/x/exp/io/i2c"
 	"math"
+	"sync"
 	"time"
 )
 
@@ -33,7 +34,8 @@ const (
 )
 
 type PCA9685 struct {
-	d *i2c.Device
+	d  *i2c.Device
+	mu sync.RWMutex
 }
 
 type Channel struct {
@@ -70,6 +72,8 @@ func (c *Channel) SetPercentage(percent float32) {
 }
 
 func (p *PCA9685) Start() error {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	// Use i2creg I²C bus registry to find the first available I²C bus.
 	var err error
 	p.d, err = i2c.Open(&i2c.Devfs{Dev: "/dev/i2c-1"}, 0x40)
