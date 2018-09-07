@@ -28,8 +28,8 @@ const (
 	DEFAULT_FREQ float32 = 50.0
 	OSC_FREQ     float32 = 25000000.0
 	STEP_COUNT   float32 = 4096.0
-	MIN_PULSE    float32 = 100
-	MAX_PULSE    float32 = 450
+	MIN_PULSE    float32 = 80
+	MAX_PULSE    float32 = 480
 )
 
 type PCA9685 struct {
