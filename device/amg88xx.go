@@ -279,13 +279,13 @@ func (p *AMG88XX) ReadPixelsRAW() []byte {
 	return buf
 }
 
-func (p *AMG88XX) ReadPixels() []byte {
+func (p *AMG88XX) ReadPixels() []float64 {
 	raw := p.ReadPixelsRAW()
-	buf := make([]byte, 64)
+	buf := make([]float64, 64)
 
 	for i, b := range raw {
 		recast := uint16(b<<8) | uint16(b)
-		buf[i] = byte(p.signedMag12ToFloat(recast) * AMG88xx_PIXEL_TEMP_CONVERSION)
+		buf[i] = p.signedMag12ToFloat(recast) * AMG88xx_PIXEL_TEMP_CONVERSION
 	}
 	return buf
 }
