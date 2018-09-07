@@ -2,7 +2,6 @@ package device
 
 import (
 	"golang.org/x/exp/io/i2c"
-	"math"
 	"sync"
 	"time"
 )
@@ -285,7 +284,7 @@ func (p *AMG88XX) ReadPixels() []byte {
 	buf := make([]byte, 64)
 
 	for b, i := range raw {
-		recast := b<<8 | b
+		recast := uint16(b<<8) | uint16(b)
 		buf[i] = byte(p.signedMag12ToFloat(recast) * AMG88xx_PIXEL_TEMP_CONVERSION)
 	}
 	return buf
