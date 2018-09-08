@@ -51,9 +51,21 @@ func main() {
 			}
 			log.Printf("Perform cyber-arm rotation to (%f,%f)\n", alpha, beta)
 			//rotate(alpha, beta)
+			if alpha < 0 {
+				alpha = 0
+			}
+			if alpha > 100 {
+				alpha = 100
+			}
 			xChannel := pca9685.GetChannel(0)
 			xChannel.SetPercentage(float32(alpha))
 
+			if beta < 50 {
+				beta = 50
+			}
+			if beta > 100 {
+				beta = 100
+			}
 			yChannel := pca9685.GetChannel(1)
 			yChannel.SetPercentage(float32(beta))
 
