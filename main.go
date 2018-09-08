@@ -8,8 +8,11 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"periph.io/x/periph/conn/gpio"
+	"periph.io/x/periph/conn/gpio/gpioreg"
 	"strconv"
 	"syscall"
+	"time"
 )
 
 //var (
@@ -36,6 +39,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	relayPin := gpioreg.ByName("26")
+	if relayPin == nil {
+		panic(err)
+	}
+	relayPin.Out(gpio.Low)
 
 	s.ListenCyberArmCommands(cyberArmAddr, func(command *command.Command) {
 		switch command.Name {
@@ -71,6 +80,12 @@ func main() {
 		case "FIRE":
 			log.Printf("Perform fire action\n")
 			//fire()
+			if relayPin.Read() == gpio.High {
+				return
+			}
+			relayPin.Out(gpio.High)
+			time.Sleep(300 * time.Millisecond)
+			relayPin.Out(gpio.Low)
 		}
 	})
 	//s.ConnectServer(cyberArmAddr, []byte(`{"name":"ROTATE","arguments":["50", "100"]}`))
