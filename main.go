@@ -1,79 +1,98 @@
 package main
 
 import (
-	"fmt"
-	"github.com/kuai6/cyber_arm/config"
-	"github.com/kuai6/cyber_arm/device"
-	"github.com/kuai6/cyber_arm/server"
-	"github.com/spf13/cobra"
+	s "github.com/kuai6/cyber_arm/server"
 	"log"
-	"strconv"
+	"net"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
-var (
-	host              string
-	port              string
-	messageBufferSize string
-	messageQueueSize  string
-)
+//var (
+//	host              string
+//	port              string
+//	messageBufferSize string
+//	messageQueueSize  string
+//)
 
 func main() {
-
-	//d := device.PCA9685{}
-	//d.Start()
-	//c1 := d.GetChannel(0)
-	//v1, _ := strconv.ParseFloat(os.Args[1], 32)
-	//c1.SetPercentage(float32(v1))
-	//
-	//c2 := d.GetChannel(1)
-	//v2, _ := strconv.ParseFloat(os.Args[2], 32)
-	//c2.SetPercentage(float32(v2))
-
-	d := device.AMG88XX{}
-	err := d.Start()
+	cyberArmAddr, err := net.ResolveUDPAddr("udp", "0.0.0.0:10001")
 	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("%v", d.ReadPixels())
-
-	var rootCmd = &cobra.Command{Use: "cyber-arm-service"}
-	var start = &cobra.Command{
-		Use:   "start",
-		Short: "Start server",
-		Run: func(cmd *cobra.Command, args []string) {
-			configuration, err := readConfiguration()
-			if err != nil {
-				log.Fatalf("Failed to initialize server configuration: %s", err)
-			}
-			server.Start(configuration)
-		},
+		log.Fatal(err)
 	}
 
-	start.PersistentFlags().StringVar(&host, "host", "0.0.0.0", "server host")
-	start.PersistentFlags().StringVar(&port, "port", "10001", "server port")
-	start.PersistentFlags().StringVar(&messageBufferSize, "messageBufferSize", "1024", "message buffer size (in bytes)")
-	start.PersistentFlags().StringVar(&messageQueueSize, "messageQueueSize", "10", "message queue size")
+	s.ListenCyberArmCommands(cyberArmAddr)
+	//s.ConnectServer(cyberArmAddr, []byte(`{"name":"ROTATE","arguments":["1.1", "1.2"]}`))
+	//s.ConnectServer(cyberArmAddr, []byte(`{"name":"FIRE"}`))
 
-	rootCmd.AddCommand(start)
-	rootCmd.Execute()
+	thermalSensorAddr, err := net.ResolveUDPAddr("udp", "0.0.0.0:10002")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	s.StreamThermalSensorData(thermalSensorAddr)
+	//s.ConnectServer(thermalSensorAddr, nil)
+
+	//var server, thermalServer *s.Server
+	//
+	//var rootCmd = &cobra.Command{Use: "cyber-arm-service"}
+	//var start = &cobra.Command{
+	//	Use:   "start",
+	//	Short: "Start server",
+	//	Run: func(cmd *cobra.Command, args []string) {
+	//		serverConfig, err := readConfiguration()
+	//		if err != nil {
+	//			log.Fatalf("Failed to initialize server configuration: %s", err)
+	//		}
+	//
+	//		server, err = s.NewServer(serverConfig)
+	//		if err != nil {
+	//			log.Fatalf("Failed to create server: %s", err)
+	//		}
+	//
+	//		err = server.Start(func(message *s.Message) error {
+	//			log.Printf("Received message: %s\n", string(message.Data))
+	//			return nil
+	//		})
+	//		if err != nil {
+	//			log.Fatalf("Failed to start server: %s", err)
+	//		}
+	//	},
+	//}
+	//
+	//start.PersistentFlags().StringVar(&host, "host", "0.0.0.0", "server host")
+	//start.PersistentFlags().StringVar(&port, "port", "10001", "server port")
+	//start.PersistentFlags().StringVar(&messageBufferSize, "messageBufferSize", "1024", "message buffer size (in bytes)")
+	//start.PersistentFlags().StringVar(&messageQueueSize, "messageQueueSize", "10", "message queue size")
+	//
+	stopSignal := make(chan os.Signal)
+	signal.Notify(stopSignal, syscall.SIGTERM)
+	signal.Notify(stopSignal, syscall.SIGINT)
+
+	//rootCmd.AddCommand(start)
+	//go rootCmd.Execute()
+	//
+	<-stopSignal
+	log.Println("Server is shutting down...")
 }
 
-func readConfiguration() (*config.ServerConfiguration, error) {
-	configuration := new(config.ServerConfiguration)
-	configuration.Host = host
-	configuration.Port = port
-
-	if messageBufferSize, err := strconv.Atoi(messageBufferSize); err != nil {
-		return nil, err
-	} else {
-		configuration.MessageBufferSize = messageBufferSize
-	}
-
-	if messageQueueSize, err := strconv.Atoi(messageQueueSize); err != nil {
-		return nil, err
-	} else {
-		configuration.MessageQueueSize = messageQueueSize
-	}
-
-	return configuration, nil
-}
+//func readConfiguration() (*config.ServerConfiguration, error) {
+//	configuration := new(config.ServerConfiguration)
+//	configuration.Host = host
+//	configuration.Port = port
+//
+//	if messageBufferSize, err := strconv.Atoi(messageBufferSize); err != nil {
+//		return nil, err
+//	} else {
+//		configuration.MessageBufferSize = messageBufferSize
+//	}
+//
+//	if messageQueueSize, err := strconv.Atoi(messageQueueSize); err != nil {
+//		return nil, err
+//	} else {
+//		configuration.MessageQueueSize = messageQueueSize
+//	}
+//
+//	return configuration, nil
+//}
