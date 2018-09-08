@@ -74,7 +74,7 @@ func main() {
 			//fire()
 		}
 	})
-	s.ConnectServer(cyberArmAddr, []byte(`{"name":"ROTATE","arguments":["50", "100"]}`))
+	//s.ConnectServer(cyberArmAddr, []byte(`{"name":"ROTATE","arguments":["50", "100"]}`))
 	//s.ConnectServer(cyberArmAddr, []byte(`{"name":"FIRE"}`))
 
 	thermalSensorAddr, err := net.ResolveUDPAddr("udp", "0.0.0.0:10002")
