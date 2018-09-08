@@ -1,11 +1,14 @@
 package main
 
 import (
+	"github.com/kuai6/cyber_arm/command"
+	"github.com/kuai6/cyber_arm/device"
 	s "github.com/kuai6/cyber_arm/server"
 	"log"
 	"net"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 )
 
@@ -22,8 +25,44 @@ func main() {
 		log.Fatal(err)
 	}
 
-	s.ListenCyberArmCommands(cyberArmAddr)
-	//s.ConnectServer(cyberArmAddr, []byte(`{"name":"ROTATE","arguments":["1.1", "1.2"]}`))
+	pca9685 := new(device.PCA9685)
+	err = pca9685.Start()
+	if err != nil {
+		panic(err)
+	}
+
+	//amg88xx := device.AMG88XX{}
+	//err = amg88xx.Start()
+	//if err != nil {
+	//    panic(err)
+	//}
+	//fmt.Printf("%v", d.ReadPixels())
+
+	s.ListenCyberArmCommands(cyberArmAddr, func(command *command.Command) {
+		switch command.Name {
+		case "ROTATE":
+			alpha, err := strconv.ParseFloat(command.Arguments[0], 32)
+			if err != nil {
+				log.Printf("Failed to parse argument: %s", err)
+			}
+			beta, err := strconv.ParseFloat(command.Arguments[1], 32)
+			if err != nil {
+				log.Printf("Failed to parse argument: %s", err)
+			}
+			log.Printf("Perform cyber-arm rotation to (%f,%f)\n", alpha, beta)
+			//rotate(alpha, beta)
+			xChannel := pca9685.GetChannel(0)
+			xChannel.SetPercentage(float32(alpha))
+
+			yChannel := pca9685.GetChannel(1)
+			yChannel.SetPercentage(float32(beta))
+
+		case "FIRE":
+			log.Printf("Perform fire action\n")
+			//fire()
+		}
+	})
+	s.ConnectServer(cyberArmAddr, []byte(`{"name":"ROTATE","arguments":["50", "100"]}`))
 	//s.ConnectServer(cyberArmAddr, []byte(`{"name":"FIRE"}`))
 
 	thermalSensorAddr, err := net.ResolveUDPAddr("udp", "0.0.0.0:10002")
