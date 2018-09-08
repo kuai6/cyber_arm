@@ -9,7 +9,8 @@ import (
 	"os"
 	"os/signal"
 	"periph.io/x/periph/conn/gpio"
-	"periph.io/x/periph/conn/gpio/gpioreg"
+	"periph.io/x/periph/host"
+	"periph.io/x/periph/host/rpi"
 	"strconv"
 	"syscall"
 	"time"
@@ -40,10 +41,11 @@ func main() {
 		panic(err)
 	}
 
-	relayPin := gpioreg.ByName("26")
-	if relayPin == nil {
-		panic(err)
+	// Make sure periph is initialized.
+	if _, err := host.Init(); err != nil {
+		log.Fatal(err)
 	}
+	relayPin := rpi.P1_37
 	relayPin.Out(gpio.Low)
 
 	s.ListenCyberArmCommands(cyberArmAddr, func(command *command.Command) {
