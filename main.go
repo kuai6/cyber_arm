@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"strconv"
 	"syscall"
+	"time"
 )
 
 //var (
@@ -36,6 +37,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	relayGpioPin := new(device.GPIO).Pin("26").Output()
+	relayGpioPin.Low()
 
 	s.ListenCyberArmCommands(cyberArmAddr, func(command *command.Command) {
 		switch command.Name {
@@ -71,6 +75,11 @@ func main() {
 		case "FIRE":
 			log.Printf("Perform fire action\n")
 			//fire()
+			if relayGpioPin.IsLow() {
+				relayGpioPin.High()
+				time.Sleep(300 * time.Second)
+				relayGpioPin.Low()
+			}
 		}
 	})
 	//s.ConnectServer(cyberArmAddr, []byte(`{"name":"ROTATE","arguments":["50", "100"]}`))
