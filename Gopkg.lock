@@ -3,36 +3,52 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:7f76ce72ba1b454bd0f084063a852a8770efdcfb84fe53d62a2bcdaea88657fa"
   name = "golang.org/x/exp"
   packages = [
     "io/i2c",
-    "io/i2c/driver",
+    "io/i2c/driver"
   ]
-  pruneopts = "UT"
   revision = "e88728d35e99800368f4acc0969018db6b0d3dd5"
 
 [[projects]]
-  digest = "1:1cd94edc47e6b4e5a7cc95178ce076e976fd7663c9259442f96b346964c73554"
   name = "periph.io/x/periph"
   packages = [
+    ".",
     "conn",
     "conn/gpio",
     "conn/gpio/gpioreg",
+    "conn/gpio/gpiostream",
+    "conn/i2c",
+    "conn/i2c/i2creg",
     "conn/physic",
     "conn/pin",
+    "conn/pin/pinreg",
+    "conn/spi",
+    "conn/spi/spireg",
+    "host",
+    "host/allwinner",
+    "host/am335x",
+    "host/bcm283x",
+    "host/beagle/black",
+    "host/beagle/bone",
+    "host/beagle/green",
+    "host/chip",
+    "host/cpu",
+    "host/distro",
+    "host/fs",
+    "host/odroidc1",
+    "host/pine64",
+    "host/pmem",
+    "host/rpi",
+    "host/sysfs",
+    "host/videocore"
   ]
-  pruneopts = "UT"
   revision = "f34a1b4e75c5935f6269723ae45eacd0aa1d1a2a"
   version = "v3.1.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = [
-    "golang.org/x/exp/io/i2c",
-    "periph.io/x/periph/conn/gpio",
-    "periph.io/x/periph/conn/gpio/gpioreg",
-  ]
+  inputs-digest = "8d85cbcd80994c2701b5fa27a4c9c4f56d9f1fdfd6c623a0c9622580a44436a5"
   solver-name = "gps-cdcl"
   solver-version = 1
