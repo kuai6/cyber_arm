@@ -31,12 +31,11 @@ func main() {
 		panic(err)
 	}
 
-	//amg88xx := device.AMG88XX{}
-	//err = amg88xx.Start()
-	//if err != nil {
-	//    panic(err)
-	//}
-	//fmt.Printf("%v", d.ReadPixels())
+	amg88xx := device.AMG88XX{}
+	err = amg88xx.Start()
+	if err != nil {
+		panic(err)
+	}
 
 	s.ListenCyberArmCommands(cyberArmAddr, func(command *command.Command) {
 		switch command.Name {
@@ -82,7 +81,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	s.StreamThermalSensorData(thermalSensorAddr)
+	s.StreamThermalSensorData(thermalSensorAddr, func() []byte {
+		return amg88xx.ReadPixelsRAW()
+	})
 	//s.ConnectServer(thermalSensorAddr, nil)
 
 	//var server, thermalServer *s.Server

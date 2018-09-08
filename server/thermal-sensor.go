@@ -5,7 +5,7 @@ import (
 	"net"
 )
 
-func StreamThermalSensorData(addr *net.UDPAddr) {
+func StreamThermalSensorData(addr *net.UDPAddr, getData func() []byte) {
 	buffer := make([]byte, 2048)
 	packetConn, err := net.ListenPacket(addr.Network(), addr.String())
 	if err != nil {
@@ -20,7 +20,7 @@ func StreamThermalSensorData(addr *net.UDPAddr) {
 				log.Println(err)
 				continue
 			}
-			go packetConn.WriteTo([]byte("sensor_data"), clientAddr)
+			go packetConn.WriteTo(getData(), clientAddr)
 		}
 	}()
 }
