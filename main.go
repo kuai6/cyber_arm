@@ -23,7 +23,8 @@ func main() {
 	}
 
 	s.ListenCyberArmCommands(cyberArmAddr)
-	//s.ConnectServer(cyberArmAddr, []byte("ROTATE|x|y|z"))
+	//s.ConnectServer(cyberArmAddr, []byte(`{"name":"ROTATE","arguments":["1.1", "1.2"]}`))
+	//s.ConnectServer(cyberArmAddr, []byte(`{"name":"FIRE"}`))
 
 	thermalSensorAddr, err := net.ResolveUDPAddr("udp", "0.0.0.0:10002")
 	if err != nil {
